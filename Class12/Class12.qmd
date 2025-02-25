@@ -1,0 +1,89 @@
+---
+title: "Class 12: Ensembl"
+author: "Thomas Bailey"
+format: pdf
+---
+
+## Section 1. Propotion og G/G in a population 
+
+Downloaded a CSV file from Ensemble < link here 
+
+Here we read this CSV file 
+
+
+```{r}
+mxl <- read.csv("373531-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+
+head(mxl)
+```
+
+```{r}
+table(mxl$Genotype..forward.strand.)
+```
+
+```{r}
+table(mxl$Genotype..forward.strand.)/nrow(mxl) *100
+```
+
+Now let's look at a different population. I pickd the GBR. 
+
+```{r}
+gbr <- read.csv("373522-SampleGenotypes-Homo_sapiens_Variation_Sample_rs8067378.csv")
+
+head(gbr)
+```
+
+Find the proportion of G|G
+
+```{r}
+table(gbr$Genotype..forward.strand.)/nrow(gbr) * 100 
+```
+
+This varient that is associated with childhood asthma is more frequent in the GBR population than the MXL population. 
+
+Lets now dig into this further. 
+
+## Section 4: Population Scale Analysis
+One smaple is obviously not enough to know what is happening in a population you are interested in assessing genetic differences on a population scale. 
+
+How many samples do we have? 
+```{r}
+expr <- read.table("rs8067378_ENSG00000172057.6.txt")
+head(expr)
+```
+
+
+```{r}
+nrow(expr)
+```
+> Q13: Read this file into R and determine the sample size for each genotype and their
+corresponding median expression levels for each of these genotypes.
+
+```{r}
+table(expr$geno)
+```
+```{r}
+library(ggplot2) 
+
+```
+
+
+Lets make a boxplot
+
+```{r}
+ggplot(expr) + aes(x=geno, exp, fill=geno) + geom_boxplot(notch=TRUE)
+```
+
+
+```{r}
+summary(expr)
+```
+> Q14: Generate a boxplot with a box per genotype, what could you infer from the relative
+expression value between A/A and G/G displayed in this plot? Does the SNP effect the
+expression of ORMDL3?
+
+based on the boxplot it seems as though the SNP does effect the expression of ORMDL3. 
+
+
+
+
