@@ -1,0 +1,137 @@
+---
+title: "AlphaFold Analysis"
+author: "Thomas Bailey"
+format: html
+---
+
+
+Here we run through a complete "pipeline" of structure analysis that begins with a singe sequence  identifier and ends with a PCA analysis. 
+
+```{r}
+library(bio3d)
+```
+
+## Step 1. retrive a sequence for the protein we are interested in. We will take ADK "1ake_A"
+
+```{r}
+id <- "1ake_A" 
+aa <- get.seq(id)
+aa
+```
+## Step 2. Blast search 
+
+Run a BLAST search of the PDB for all related sequences to our input `aa`
+
+```{r}
+blast <- blast.pdb(aa)
+```
+
+```{r}
+hits <- plot(blast)
+```
+## Step 3. Download all structures 
+These are our "top hits" i.e. all the structures in the PDB  database related to our input sequence
+
+```{r}
+hits$pdb.id
+```
+
+```{r}
+# Download releated PDB files
+files <- get.pdb(hits$pdb.id, path="pdbs", split=TRUE, gzip=TRUE)
+```
+
+## step 4. Align and superpose
+
+```{r}
+pdbs <- pdbaln(files, fit = TRUE, exefile="msa")
+```
+
+```{r}
+pdbs
+```
+
+
+## Step 5. PCA
+
+Let's use our old friend PCA to make sense of these confussing, complicated structure relationships
+
+
+```{r}
+pc <- pca(pdbs)
+plot(pc)
+```
+
+Let's make a trajectory (or movie) of the main conformational changes capptured by PC1. We will use the `mktrj()` function for this... 
+
+```{r}
+mktrj(pc, file="pca_result.pdb")
+```
+
+
+Back of the envelope comparison of the PDB size to UniProt 
+
+```{r}
+uniprot <- 253206171
+pdb <- 231029
+pdb/uniprot * 100
+```
+
+Here we analyze our AlphaFold structure prediction models. The input directory/folder comes from the ColabFold server: 
+
+
+
+```{r}
+# Change this for YOUR results dir name
+results_dir <- "..." 
+```
+
+```{r}
+# File names for all PDB models
+pdb_files <- list.files(path=results_dir,
+                        pattern="*.pdb",
+                        full.names = TRUE)
+
+# Print our PDB file names
+basename(pdb_files)
+```
+
+
+```{r}
+library(bio3d)
+```
+
+Align and superpose
+
+```{r}
+pdbs <- pdbaln(pdb_files, fit=TRUE, exefile="msa")
+pdbs
+```
+
+
+```{r}
+pc <- pca(pdbs)
+plot(pc)
+```
+
+
+## RMSD analysis
+RMSD is a commmon measure od strucual distance used in structual biology. 
+
+```{r}
+rd <- rmsd(pdbs, fit=T)
+```
+
+```{r}
+rd
+```
+
+```{r}
+library(pheatmap)
+
+colnames(rd) <- paste0("m",1:5)
+rownames(rd) <- paste0("m",1:5)
+pheatmap(rd)
+```
+
+
