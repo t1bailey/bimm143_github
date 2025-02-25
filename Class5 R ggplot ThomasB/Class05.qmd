@@ -1,0 +1,172 @@
+---
+title: "Class 5 : Data Vis ggplot"
+author: "Thomas Bailey"
+format: pdf
+---
+
+## Intro to ggplot
+
+There are many graphics systems in R (ways to make plots and figures). These include "base" R plots. Today we will focus mostly on  **ggplot2** package.
+
+Let's start with a plot of a simple in-built dataset called `cars`. 
+
+```{r}
+plot(cars)
+
+```
+
+
+Let's see how we make this figure using **ggplot**. First I need to install this package on my computer. To install any R package I use the function `install.packages()`. 
+
+>I will run `install.packages("ggplots2") in my R console not this quarto document!
+
+
+
+Before I can use any functions from add on packages I need to load package from my "library()" with the `library(ggplot2)` call. 
+
+```{r}
+library(ggplot2)
+ggplot(cars)
+```
+
+All ggplot figures have at least 3 things (called layers). These include: 
+
+-**data** (the input dataset I want to plot from), 
+-**aes** (the aesthetic mapping of the data to my plot),
+-**geoms** (the geom_point(), geom_line() etc. that I want to draw).
+
+```{r}
+ggplot(cars) + aes(x=speed, y=dist) + geom_point()
+```
+
+
+
+Let's add a line to show the relationship here: 
+
+```{r}
+ggplot(cars) + aes(x=speed, y=dist) + geom_point() + geom_smooth(method = "lm") + theme_bw()+ labs(title = "My first GGPLOT")
+
+```
+
+
+>Q1 Which geometric layer should be used to create scatter plots 
+
+>geom_point
+
+```{r} 
+url <- "https://bioboot.github.io/bimm143_S20/class-material/up_down_expression.txt"
+genes <- read.delim(url)
+head(genes)
+```
+
+
+> How many genes are in this dataset? 
+
+```{r}
+nrow(genes)
+```
+
+A first plot of this 
+
+```{r}
+ggplot(genes) + aes(x=Condition1, y=Condition2, col=State)+ geom_point() + theme_bw() + labs(title = "Gene Expression changes upon drug treatement", x="Control Expression", y="Drug Pressenece Expression") + scale_colour_manual(values=c("blue", "gray", "red"))
+```
+
+
+
+
+```{r}
+table(genes$State)
+```
+
+> Q.Using your values above and 2 significant figures. What fraction of total genes is up-regulated in this dataset?
+
+  
+```{r}
+round(table(genes$State)/nrow(genes), 4)
+```
+
+```{r}
+n.tot <- nrow(genes)
+
+vals <- table(genes$State)
+
+vals.percent <- vals/n.tot * 100
+round(vals.percent, 2) 
+```
+
+
+```{r}
+colnames(genes)
+```
+```{r}
+round(table(genes$State)/nrow(genes), 2)
+```
+
+
+
+```{r}
+p <- ggplot(genes) + aes(x=Condition1, y=Condition2, col=State)+ geom_point()
+```
+
+
+```{r}
+p + theme_minimal()
+```
+
+
+```{r}
+p + labs(title = "Hello")
+```
+
+
+```{r}
+url <- "https://raw.githubusercontent.com/jennybc/gapminder/master/inst/extdata/gapminder.tsv"
+
+gapminder <- read.delim(url)
+```
+
+```{r}
+library(dplyr)
+library(gapminder)
+```
+```{r}
+gapminder_2007 <-gapminder %>% filter(year==2007)
+```
+
+```{r}
+ggplot(gapminder_2007) + aes(x=gdpPercap, y=lifeExp) + geom_point(alpha=0.5) + labs(title= "lifeExp/gdgPercap")
+
+```
+
+```{r}
+gapminder_1957<-gapminder %>% filter(year==1957)
+```
+
+```{r}
+ggplot(gapminder_1957) + 
+  aes(x = gdpPercap, y = lifeExp, color=continent,
+                 size = pop) +
+  geom_point(alpha=0.7) + 
+  scale_size_area(max_size = 7)
+```
+
+```{r}
+ggplot(gapminder_2007) + aes(x=gdpPercap, y=lifeExp, color=continent, size=pop) + geom_point(alpha=0.2) + labs(title= "Best Places to Live") + scale_size_area(max_size = 7) + facet_wrap(~year)
+
+```
+
+```{r}
+gapminder_1957 <- gapminder %>% filter(year==1957 | year==2007)
+```
+
+```{r}
+ggplot(gapminder_1957) + 
+  geom_point(aes(x = gdpPercap, y = lifeExp, color=continent,
+                 size = pop), alpha=0.7) + 
+  scale_size_area(max_size = 6) +
+  facet_wrap(~year)
+```
+
+
+
