@@ -10,4 +10,4 @@ My classwork from W25 [BIMM143](https://bioboot.github.io/bimm143_W25/) at UC sa
 
 - Class07 [Introduction to machine learning for Bioinformatics 1]()
   
-- Class08 [Unsupervised learning mini-project]()
+- Class08 [Unsupervised learning mini-project](https://raw.githubusercontent.com/t1bailey/bimm143_github/refs/heads/main/Class08/Class08.html)
